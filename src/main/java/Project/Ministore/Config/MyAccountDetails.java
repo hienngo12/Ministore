@@ -36,7 +36,7 @@ private AccountEntity account;
 
     @Override
     public boolean isAccountNonLocked() {
-        return account.getAccount_nonlocked();
+        return true;
     }
 
     @Override
@@ -47,5 +47,11 @@ private AccountEntity account;
     @Override
     public boolean isEnabled() {
         return account.getEnable();
+    }
+
+    private AccountEntity accountEntity; // Đối tượng thực thể được ánh xạ từ cơ sở dữ liệu
+
+    public AccountEntity getAccountEntity() {
+        return this.accountEntity;
     }
 }

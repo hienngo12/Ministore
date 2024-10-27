@@ -119,6 +119,24 @@ public class OrdersEntity {
     public void setOrdersAddressEntity(OrdersAddressEntity ordersAddressEntity) {
         this.ordersAddressEntity = ordersAddressEntity;
     }
+    public String getStatusText() {
+        switch (this.status) {
+            case "1":
+                return "Đang tiến hành";
+            case "2":
+                return "Đã nhận được đơn hàng";
+            case "3":
+                return "Sản phẩm được đóng gói";
+            case "4":
+                return "Ra ngoài để giao hàng";
+            case "5":
+                return "Đã giao hàng";
+            case "6":
+                return "Huỷ đơn hàng";
+            default:
+                return "Trạng thái không xác định";
+        }
+    }
 
 }
 

@@ -13,8 +13,8 @@ import java.util.*;
 public class VNPayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String vnp_Returnurl = "/vnpay-payment";
-    public static String vnp_TmnCode = "N5XIZYGP"; // Thay bằng mã TmnCode thực tế
-    public static String vnp_HashSecret = "2DJVEN1A0DEVXREIZLDS2Y3L408WNQ99"; // Thay bằng Hash Secret thực tế
+    public static String vnp_TmnCode = "QY7JJYEU"; // Thay bằng mã TmnCode thực tế
+    public static String vnp_HashSecret = "2BNSYKYSOAKX73BK3Q9N3BQFCW7GWGM4"; // Thay bằng Hash Secret thực tế
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
     public static String md5(String message) {
@@ -76,7 +76,6 @@ public class VNPayConfig {
 
     public static String hmacSHA512(final String key, final String data) {
         try {
-
             if (key == null || data == null) {
                 throw new NullPointerException();
             }
@@ -91,9 +90,10 @@ public class VNPayConfig {
                 sb.append(String.format("%02x", b & 0xff));
             }
             return sb.toString();
-
         } catch (Exception ex) {
-            return "";
+            // Log lỗi thay vì trả về chuỗi rỗng
+            ex.printStackTrace();
+            throw new RuntimeException("Error while generating HMAC SHA512", ex);
         }
     }
 

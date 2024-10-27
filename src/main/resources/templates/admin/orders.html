@@ -51,141 +51,66 @@
                     </tr>
                     </thead>
                     <tbody>
-                            <tr th:each="o:${orders}">
-                                <th scope="row">[[${o.orderId}]]</th>
-                                <td>
-                                    Name : [[${o.ordersAddressEntity.first_name+' '+o.ordersAddressEntity.last_name}]]<br>
-                                    Email : [[${o.ordersAddressEntity.email}]] <br>
-                                    Phone: [[${o.ordersAddressEntity.phone}]] <br>
-                                    Address : [[${o.ordersAddressEntity.address}]] <br>
-                                    City : [[${o.ordersAddressEntity.city}]] <br>
-                                    Province : [[${o.ordersAddressEntity.province}]]
-                                </td>
-                                <td>[[${o.orderDate}]]</td>
-                                <td>[[${o.productEntity.product_name}]]</td>
-                                <td>Quantity : [[${o.quantity}]] <br>
-                                    Price : [[${o.price}]] <br>
-                                    Total Price :[[${o.quantity * o.price}]]
-                                </td>
-                                <td>[[${o.status}]]</td>
-                                <td>
-                                    <form action="/admin/update-order-status" method="post">
-                                        <div class="row">
-                                            <div class="col">
-                                                <select class="form-control" name="st">
-                                                    <option>--select--</option>
-                                                    <option value="1">Đang Tiến Hành</option>
-                                                    <option value="2">Đã Nhận Được Đơn Hàng</option>
-                                                    <option value="3">Sản Phẩm Được Đóng Gói</option>
-                                                    <option value="4">Ra Ngoài Để Giao Hàng</option>
-                                                    <option value="5">Đã Giao Hàng</option>
-                                                    <option value="6">Huỷ Đơn Hàng</option>
-                                                </select>
-                                            </div>
-                                            <input th:value="${o.id}" name="id" type="hidden">
-                                            <div class="col">
-                                                <th:block
-                                                        th:if="${o.status=='Cancelled' || o.status=='Delivered'}">
-                                                    <button class="btn btn-primary btn-sm col disabled">Cập nhật</button>
-                                                </th:block>
-                                                <th:block
-                                                        th:unless="${o.status=='Cancelled' || o.status=='Delivered'}">
-                                                    <button class="btn btn-sm btn-primary ">Cập nhật</button>
-                                                </th:block>
-                                            </div>
+                    <!-- Kiểm tra danh sách orders -->
+                    <th:block th:if="${orders != null and !orders.empty}">
+                        <tr th:each="o : ${orders}">
+                            <!-- Sử dụng th:text thay vì [[...]] -->
+                            <th scope="row" th:text="${o != null ? o.orderId : ''}"></th>
+                            <td>
+                                <!-- Sử dụng th:with để kiểm tra null -->
+                                <th:block th:with="addr=${o != null ? o.ordersAddressEntity : null}">
+                                    Name : <span th:text="${addr != null ? addr.name : ''}"></span><br>
+                                    Email : <span th:text="${addr != null ? addr.email : ''}"></span><br>
+                                    Phone: <span th:text="${addr != null ? addr.phone : ''}"></span><br>
+                                    Address : <span th:text="${addr != null ? addr.address : ''}"></span><br>
+                                    City : <span th:text="${addr != null ? addr.city : ''}"></span><br>
+                                    Province : <span th:text="${addr != null ? addr.province : ''}"></span>
+                                </th:block>
+                            </td>
+                            <td th:text="${o != null ? o.orderDate : ''}"></td>
+                            <td th:text="${o != null and o.productEntity != null ? o.productEntity.product_name : ''}"></td>
+                            <td>
+                                Quantity : <span th:text="${o != null ? o.quantity : ''}"></span><br>
+                                Price : <span th:text="${o != null ? o.price : ''}"></span><br>
+                                Total Price : <span th:text="${o != null ? (o.quantity * o.price) : ''}"></span>
+                            </td>
+                            <td th:text="${o != null ? o.getStatusText() : ''}"></td>
+                            <td>
+                                <form action="/admin/update-order-status" method="post" th:if="${o != null}">
+                                    <div class="row">
+                                        <div class="col">
+                                            <select class="form-control" name="st">
+                                                <option value="">--select--</option>
+                                                <option value="1">Đang Tiến Hành</option>
+                                                <option value="2">Đã Nhận Được Đơn Hàng</option>
+                                                <option value="3">Sản Phẩm Được Đóng Gói</option>
+                                                <option value="4">Ra Ngoài Để Giao Hàng</option>
+                                                <option value="5">Đã Giao Hàng</option>
+                                                <option value="6">Huỷ Đơn Hàng</option>
+                                            </select>
                                         </div>
-                                    </form>
-                                </td>
-                            </tr>
-                        <th:block th:unless="${orderDtls!=null}">
-                            <p class="fs-3 text-center text-danger">[[${errorMsg}]]</p>
-                        </th:block>
-
-<!--                    <th:block th:unless="${srch}">-->
-<!--                        <tr th:each="o:${orders}">-->
-<!--                            <th scope="row">[[${o.orderId}]]</th>-->
-
-<!--                            <td>Name : [[${o.orderAddress.first_name+'-->
-<!--                                '+o.orderAddress.last_name}]]<br> Email :-->
-<!--                                [[${o.orderAddress.email}]] <br> Phone:-->
-<!--                                [[${o.orderAddress.phone}]] <br> Address :-->
-<!--                                [[${o.orderAddress.address}]] <br> City :-->
-<!--                                [[${o.orderAddress.city}]] <br> Province :-->
-<!--                                [[${o.orderAddress.province}]], [[${o.orderAddress.pincode}]]-->
-
-
-
-<!--                            </td>-->
-<!--                            <td>[[${o.orderDate}]]</td>-->
-<!--                            <td>[[${o.product.title}]]</td>-->
-<!--                            <td>Quantity : [[${o.quantity}]] <br>Price :-->
-<!--                                [[${o.price}]] <br>Total Price :[[${o.quantity *-->
-<!--                                o.price}]]-->
-<!--                            </td>-->
-<!--                            <td>[[${o.status}]]</td>-->
-<!--                            <td>-->
-<!--                                <form action="/admin/update-order-status" method="post">-->
-<!--                                    <div class="row">-->
-<!--                                        <div class="col">-->
-<!--                                            <select class="form-control" name="st">-->
-<!--                                                <option>&#45;&#45;select&#45;&#45;</option>-->
-<!--                                                <option value="1">In Progress</option>-->
-<!--                                                <option value="2">Order Received</option>-->
-<!--                                                <option value="3">Product Packed</option>-->
-<!--                                                <option value="4">Out for Delivery</option>-->
-<!--                                                <option value="5">Delivered</option>-->
-<!--                                                <option value="6">Cancelled</option>-->
-<!--                                            </select>-->
-<!--                                        </div>-->
-<!--                                        <input th:value="${o.id}" name="id" type="hidden">-->
-<!--                                        <div class="col">-->
-<!--                                            <th:block-->
-<!--                                                    th:if="${o.status=='Cancelled' || o.status=='Delivered'}">-->
-<!--                                                <button class="btn btn-primary btn-sm col disabled">Update</button>-->
-<!--                                            </th:block>-->
-<!--                                            <th:block-->
-<!--                                                    th:unless="${o.status=='Cancelled' || o.status=='Delivered'}">-->
-<!--                                                <button class="btn btn-sm btn-primary ">Update</button>-->
-<!--                                            </th:block>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </form>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                    </th:block>-->
+                                        <input type="hidden" name="id" th:value="${o.id}">
+                                        <div class="col">
+                                            <button th:if="${o.status == 'Cancelled' || o.status == 'Delivered'}"
+                                                    class="btn btn-primary btn-sm col disabled">Cập nhật</button>
+                                            <button th:unless="${o.status == 'Cancelled' || o.status == 'Delivered'}"
+                                                    class="btn btn-sm btn-primary">Cập nhật</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    </th:block>
+                    <tr th:if="${orders == null || orders.empty}">
+                        <td colspan="7" class="text-center">Không có đơn hàng nào</td>
+                    </tr>
                     </tbody>
                 </table>
-                <th:block th:if="${!srch}">
-                    <div class="row">
-                        <div class="col-md-4">Total Orders : [[${totalElements}]]</div>
-<!--                        <div class="col-md-6">-->
-
-<!--                            <nav aria-label="Page navigation example">-->
-<!--                                <ul class="pagination">-->
-<!--                                    <li class="page-item"-->
-<!--                                        th:classappend="${isFirst} ? 'disabled':''"><a-->
-<!--                                            class="page-link"-->
-<!--                                            th:href="@{'/admin/orders?pageNo='+${pageNo-1}}"-->
-<!--                                            aria-label="Previous"> <span aria-hidden="true">&laquo;</span>-->
-<!--                                    </a></li>-->
-
-<!--                                    <li th:each="i:${#numbers.sequence(1,totalPages)}"-->
-<!--                                        class="page-item" th:classappend="${pageNo+1==i}?'active':''"-->
-<!--                                        ]]><a class="page-link"-->
-<!--                                              th:href="@{'/admin/orders?pageNo='+${i-1}}">[[${i}]]</a></li>-->
-
-<!--                                    <li class="page-item"-->
-<!--                                        th:classappend="${isLast} ? 'disabled':''"><a-->
-<!--                                            class="page-link"-->
-<!--                                            th:href="@{'/admin/orders?pageNo='+${pageNo+1}}"-->
-<!--                                            aria-label="Next"> <span aria-hidden="true">&raquo;</span>-->
-<!--                                    </a></li>-->
-<!--                                </ul>-->
-<!--                            </nav>-->
-<!--                        </div>-->
-
+                <div class="row">
+                    <div class="col-md-4">
+                        Tổng số đơn hàng: <span th:text="${orders != null ? #lists.size(orders) : 0}"></span>
                     </div>
-                </th:block>
+                </div>
             </div>
         </div>
 

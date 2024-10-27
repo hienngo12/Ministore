@@ -3,7 +3,7 @@
       th:replace="~{base::layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
-    <title>Hồ Sơ Người Dùng</title>
+    <title>Insert title here</title>
 </head>
 <body>
 <section>
@@ -23,7 +23,7 @@
                 </th:block>
                 <hr>
                 <div class="text-center">
-                    <img alt="" th:src="@{/user/getAccountFile/{id}(id=${user.id})}"
+                    <img alt="" th:src="@{/admin/getAccountFile/{id}(id=${user.id})}"
                          class="border p-2"
                          style="width: 110px; height: 110px; border-radius: 50%;">
                 </div>
@@ -31,7 +31,7 @@
                     <table class="table table-borderless">
 
                         <tbody>
-                        <form action="/user/update-profile" >
+                        <form action="/admin/update-profile">
                             <tr>
                                 <th scope="row">Tên</th>
                                 <td>:</td>
@@ -95,48 +95,42 @@
                     </table>
                 </div>
             </div>
-
             <hr>
-
-            <!-- Form thay đổi mật khẩu -->
             <div class="col-md-10 offset-md-1 mt-1">
                 <div class="row">
                     <p class="text-center fs-3">Thay Đổi Mật Khẩu</p>
                     <div class="col-md-6 offset-md-3">
-                        <form action="/user/change-password" method="post">
-                            <table class="table table-borderless">
-                                <tbody>
+                        <table class="table table-borderless">
+                            <tbody>
+                            <form action="/admin/change-password" method="post">
                                 <tr>
                                     <th scope="row">Mật khẩu hiện tại</th>
-                                    <td>
-                                        <input type="password" name="currentPassword" class="form-control">
-                                    </td>
+
+                                    <td><input type="password" name="currentPassword" class="form-control"></td>
                                 </tr>
+
                                 <tr>
                                     <th scope="row">Mật khẩu mới</th>
-                                    <td>
-                                        <input type="password" name="newPassword" class="form-control">
-                                    </td>
+
+                                    <td><input type="password" name="newPassword" class="form-control"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Xác nhận mật khẩu</th>
-                                    <td>
-                                        <input type="password" name="confirmPassword" class="form-control">
-                                    </td>
+
+                                    <td><input type="password" name="confirmPassword" class="form-control"></td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm bg-primary text-light col-md-4">Cập Nhật</button>
+                                        <button class=" btn btn-sm bg-primary text-light col-md-4">Cập Nhật</button>
                                     </td>
                                 </tr>
-                                </tbody>
-                            </table>
-                        </form>
+                            </form>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </section>

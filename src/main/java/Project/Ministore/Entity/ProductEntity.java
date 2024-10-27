@@ -19,6 +19,8 @@ public class ProductEntity {
     private String description;
     @Column(name = "price" )
     private Long price;
+    @Column(name = "import_price")
+    private Long import_price;
     @Column(name = "stock_quantity")
     private int stock_quantity;
     @Column(name = "image",nullable = false)
@@ -41,9 +43,25 @@ public class ProductEntity {
         DecimalFormat df = new DecimalFormat("#,###");
         return df.format(price) + " ₫";
     }
-    public String getFormattedDiscountPrice() {
+    public String getFormattedImportPrice(){
         DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(discount_price) + " ₫";
+        return df.format(import_price) + "₫";
+    }
+    public String getFormattedDiscountPrice() {
+        // Kiểm tra nếu price là null hoặc discount là giá trị không hợp lệ
+        if (price == null || discount < 0) {
+            return "Giá không xác định";
+        }
+
+        // Tính toán giá sau khi giảm giá
+        double discountedPrice = price - (price * discount / 100.0);
+        DecimalFormat df = new DecimalFormat("#,###");
+        try {
+            return df.format(discountedPrice) + " ₫";
+        } catch (IllegalArgumentException e) {
+            // Log lỗi nếu cần và trả về giá trị mặc định hoặc thông báo lỗi
+            return "Giá không hợp lệ";
+        }
     }
     public int getId() {
         return id;
@@ -133,4 +151,22 @@ public class ProductEntity {
         this.active = active;
     }
 
+    public Long getImport_price() {
+        return import_price;
+    }
+
+    public void setImport_price(Long import_price) {
+        this.import_price = import_price;
+    }
+
+    public List<CartEntity> getCartEntities() {
+        return cartEntities;
+    }
+
+    public void setCartEntities(List<CartEntity> cartEntities) {
+        this.cartEntities = cartEntities;
+    }
+    public boolean isInStock() {
+        return stock_quantity > 0;
+    }
 }

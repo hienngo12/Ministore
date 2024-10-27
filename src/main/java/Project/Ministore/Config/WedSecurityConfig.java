@@ -22,9 +22,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class WedSecurityConfig extends WebSecurityConfigurerAdapter  {
     @Autowired
     private AuthenticationSuccessHandler authenticationSuccessHandler;
-    @Autowired
-    @Lazy
-    private AuthFailureHandlerImpl authFailureHandler;
+//    @Autowired
+//    @Lazy
+//    private AuthFailureHandlerImpl authFailureHandler;
     @Bean
     public UserDetailsService userDetailsService() {
         return new AccountDetailServiceImpl();
@@ -59,7 +59,6 @@ public class WedSecurityConfig extends WebSecurityConfigurerAdapter  {
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/")
-                        .failureHandler(authFailureHandler)
                         .successHandler(authenticationSuccessHandler))
                 .logout(logout -> logout.permitAll());
     }

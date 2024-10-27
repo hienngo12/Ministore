@@ -41,31 +41,31 @@
                              aria-labelledby="priceFilterHeading">
                             <div class="accordion-body">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="priceRange">
+                                    <input class="form-check-input" type="checkbox"  name="priceRange" checked id="allPrices">
                                     <label class="form-check-label" for="allPrices">Tất cả</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="under2m">
+                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="under2m" id="under2m">
                                     <label class="form-check-label" for="under2m">Dưới 2 triệu</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="2to4m">
+                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="2to4m" id="2to4m">
                                     <label class="form-check-label" for="2to4m">Từ 2 - 4 triệu</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="6to8m">
+                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="6to8m" id="6to8m">
                                     <label class="form-check-label" for="6to8m">Từ 6 - 8 triệu</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="10to30m">
+                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="10to30m" id="10to30m">
                                     <label class="form-check-label" for="10to30m">Từ 10 - 30 triệu</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="50to90m">
+                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="50to90m" id="50to90m">
                                     <label class="form-check-label" for="50to90m">Từ 50 - 90 triệu</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="over100m">
+                                    <input class="form-check-input" type="checkbox" name="priceRange"  value="over100m" id="over20m">
                                     <label class="form-check-label" for="over20m">Trên 100 triệu</label>
                                 </div>
                                 <button type="submit" class="btn btn-primary mt-3">Lọc</button>
@@ -73,19 +73,24 @@
                         </div>
                     </div>
                 </div>
-            </div>
+
             </form>
+            </div>
             <!-- Category and Products -->
             <div class="col-md-9">
                 <div class="col-md-12">
                     <div class="card shadow-sm p-3 mb-3 bg-body-tertiary rounded">
                     <div class="d-flex justify-content-around">
                         <div class="category-card">
+                            <a href="/products">
                             <img src="img/dongho/icon.png" width="40" height="40" alt="Tất cả"><br>
+                            </a>
                             <a href="/products" class="category-link mt-2 mb-0">Tất cả</a><br>
                         </div>
                     <div class="category-card" th:each="c:${category}">
+                        <a th:href="@{'/products?category_id='+${c.id}}">
                         <img th:src="@{/getCategoryFile/{id}(id=${c.id})}" width="40" height="40"><br>
+                        </a>
                         <a th:href="@{'/products?category_id='+${c.id}}" class="category-link mb-0 mt-2" >[[${c.name}]]</a><br>
                     </div>
                     </div>

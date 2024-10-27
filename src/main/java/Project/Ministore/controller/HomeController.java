@@ -202,8 +202,6 @@ public class HomeController {
             user.setPincode(pincode);
             user.setPhone(phone);
             user.setEnable(true);
-            user.setAccount_nonlocked(true);
-            user.setFailed_attempt(0);
             user.setPassword(bCryptPasswordEncoder.encode(password));
             user.setRole("ROLE_USER");
 //            user.setPassword(password);
@@ -246,7 +244,7 @@ public class HomeController {
     }
     @GetMapping("/forgot-password")
     public String showForgotPassword(){
-        return "forgot_password.html";
+        return "forgot_password";
     }
     @PostMapping("/forgot-password")
     public String processForgotPassword(@RequestParam String email, HttpSession session, HttpServletRequest request)
@@ -297,7 +295,6 @@ public class HomeController {
             userByToken.setPassword(bCryptPasswordEncoder.encode(password));
             userByToken.setResetToken(null);
             accountService.updateUser(userByToken);
-            // session.setAttribute("succMsg", "Password change successfully");
             model.addAttribute("msg", "Đổi mật khẩu thành công");
             return "message";
         }

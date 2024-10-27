@@ -1,12 +1,18 @@
 package Project.Ministore.service.impl;
 import Project.Ministore.Entity.AccountEntity;
+import Project.Ministore.Entity.ProductEntity;
 import Project.Ministore.repository.AccountRepository;
 import Project.Ministore.service.AccountService;
-import Project.Ministore.util.AppConstant;
+//import Project.Ministore.util.AppConstant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -49,35 +55,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void increaseFailedAttempt(AccountEntity user) {
-        int attempt = user.getFailed_attempt() + 1;
-        user.setFailed_attempt(attempt);
-        accountRepository.save(user);
-    }
-
-    @Override
-    public void userAccountLock(AccountEntity user) {
-        user.setAccount_nonlocked(false);
-        user.setLock_time(new Date());
-        accountRepository.save(user);
-    }
-
-    @Override
-    public boolean unlockAccountTimeExpired(AccountEntity user) {
-        long lock_time = user.getLock_time().getTime();
-        long unlock_time = lock_time + AppConstant.UNLOCK_DURATION_TIME;
-        long current_time = System.currentTimeMillis();
-        if (unlock_time < current_time ){
-            user.setAccount_nonlocked(true);
-            user.setFailed_attempt(0);
-            user.setLock_time(null);
-            accountRepository.save(user);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public void resetAttempt(int accountId) {
 
     }
@@ -98,6 +75,50 @@ public class AccountServiceImpl implements AccountService {
     public AccountEntity updateUser(AccountEntity user) {
         return accountRepository.save(user);
     }
+
+    @Override
+    public Page<AccountEntity> searchAccount(String keyword, Integer pageNo) {
+        Pageable pageable = PageRequest.of(pageNo - 1, 8);
+        return this.accountRepository.searchAccount(keyword, pageable);
+    }
+
+    @Override
+    public Page<AccountEntity> getAllAccount(Integer pageNo) {
+        Pageable pageable = PageRequest.of(pageNo-1,8);// Số sản phẩm mỗi trang
+        return this.accountRepository.findAll(pageable);
+    }
+
+    @Override
+    public AccountEntity updateUserProfile(AccountEntity user, MultipartFile profileImage) {
+        return null;
+    }
+
+//    @Override
+//    public AccountEntity updateUserProfile(AccountEntity user, MultipartFile profileImage) {
+//        // Tìm người dùng hiện tại trong cơ sở dữ liệu
+//        AccountEntity existingUser = accountRepository.findById(user.getId()).orElse(null);
+//        if (existingUser == null) {
+//            return null;
+//        }
+//        // Cập nhật các thuộc tính
+//        existingUser.setName(user.getName());
+//        existingUser.setPhone(user.getPhone());
+//        existingUser.setAddress(user.getAddress());
+//        existingUser.setCity(user.getCity());
+//        existingUser.setProvince(user.getProvince());
+//        existingUser.setPincode(user.getPincode());
+//        // Cập nhật ảnh đại diện nếu có tải lên
+//        try {
+//            if (profileImage != null && !profileImage.isEmpty()) {
+//                existingUser.setProfileImage(profileImage.getBytes());
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//        // Lưu người dùng đã cập nhật
+//        return accountRepository.save(existingUser);
+//    }
 
 }
 

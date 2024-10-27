@@ -33,13 +33,6 @@ public class AccountEntity {
     private String role;
     @Column(name = "is_enable")
     private Boolean enable;
-    @Column(name = "account_nonlocked")
-    private Boolean account_nonlocked;
-    @Column(name = "failed_attempt")
-    private int failed_attempt;
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "lock_time")
-    private Date lock_time;
     @Column(name = "reset_token")
     private String resetToken;
     @OneToMany(mappedBy = "accountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -145,30 +138,6 @@ public class AccountEntity {
 
     public void setEnable(Boolean enable) {
         this.enable = enable;
-    }
-
-    public Boolean getAccount_nonlocked() {
-        return account_nonlocked;
-    }
-
-    public void setAccount_nonlocked(Boolean account_nonlocked) {
-        this.account_nonlocked = account_nonlocked;
-    }
-
-    public int getFailed_attempt() {
-        return failed_attempt;
-    }
-
-    public void setFailed_attempt(int failed_attempt) {
-        this.failed_attempt = failed_attempt;
-    }
-
-    public Date getLock_time() {
-        return lock_time;
-    }
-
-    public void setLock_time(Date lock_time) {
-        this.lock_time = lock_time;
     }
 
     public String getResetToken() {

@@ -10,4 +10,6 @@ public interface CartService {
     public int getCountCart(int accountId);
     public void updateQuantity(String sy, int cid);
     public Long getTotalCart(int accountId);
+    public void clearCart(int accountId);
+
 }

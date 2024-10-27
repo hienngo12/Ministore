@@ -41,7 +41,7 @@
                             Giá Tiền : [[${o.productEntity.getFormattedPrice()}]] <br>
                             Tổng Giá Tiền : [[${o.getFormattedXPrice()}]] ;
                         </td>
-                        <td>[[${o.status}]]</td>
+                        <td>[[${o.getStatusText()}]]</td>
                         <td><th:block th:if="${o.status!='Đã Hủy'}">
                             <a th:href="@{'/user/update-status?id='+${o.id}+'&st=6' }"
                                class="btn btn-sm btn-danger">Hủy Bỏ</a>

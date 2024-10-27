@@ -12,8 +12,8 @@
         <div class="card card-sh">
             <div class="card-header text-center">
                 <p class="fs-4" >Users</p>
-<!--                <p class="fs-4" th:if="${userType==1}">Users</p>-->
-<!--                <p class="fs-4" th:if="${userType==2}">Admin</p>-->
+                <p class="fs-4" th:if="${userType==1}">Users</p>
+                <p class="fs-4" th:if="${userType==2}">Admin</p>
             </div>
             <div class="card-body">
                 <table class="table">
@@ -30,15 +30,15 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="u,c:${users}">
-                        <td th:text="${u.id}"></td>
+                    <tr th:each="u, iterStat : ${users}">
+                        <td th:text="${iterStat.index + 1}"></td>
                         <td><img th:src="@{/admin/getAccountFile/{id}(id=${u.id})}"
                                  width="70px" height="70px"></td>
                         <td th:text="${u.name}"></td>
                         <td th:text="${u.email}"></td>
                         <td th:text="${u.phone}"></td>
                         <td>[[${u.address+','+ u.city+','+ u.province+','+ u.pincode}]]</td>
-                        <td th:text="${u.enable ? 'Active' : 'Inactive'}"></td>
+                        <td th:text="${u.enable ? 'Có Hoạt Động' : 'Không Hoạt Động'}"></td>
                         <td><a th:href="@{'/admin/updateSts?enable=true&id='+${u.id}}"
                                class="btn btn-sm btn-primary">Hoạt Động</a>
                             <a th:href="@{'/admin/updateSts?enable=false&id='+${u.id}}"

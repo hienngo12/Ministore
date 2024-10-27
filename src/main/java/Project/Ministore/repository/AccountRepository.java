@@ -1,5 +1,8 @@
 package Project.Ministore.repository;
 import Project.Ministore.Entity.AccountEntity;
+import Project.Ministore.Entity.ProductEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,4 +15,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
     public AccountEntity findByEmail(@Param("email") String email);
      public List<AccountEntity> findByRole(String role);
      public AccountEntity findByResetToken(String token);
+    @Query("SELECT a FROM AccountEntity a WHERE a.name LIKE %?1%")
+    Page<AccountEntity> searchAccount(String keyword, Pageable pageable);
+
 }

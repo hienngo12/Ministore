@@ -10,12 +10,9 @@ public class OrdersAddressEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @NotBlank(message = "Tên không thể rỗng hoặc trống")
-    @Column(name = "first_name",nullable = false)
-    private String first_name;
-    @NotBlank(message = "Họ không thể rỗng hoặc trống")
-    @Column(name = "last_name",nullable = false)
-    private String last_name;
+    @NotBlank(message = "Họ & Tên  không thể rỗng hoặc trống")
+    @Column(name = "name",nullable = false)
+    private String name;
     @Email(message = "Email phải hợp lệ")
     @NotBlank(message = "Email không thể rỗng hoặc trống")
     @Column(name = "email")
@@ -40,20 +37,12 @@ public class OrdersAddressEntity {
         this.id = id;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public  String getName() {
+        return name;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
-    }
-
-    public String getLast_name() {
-        return last_name;
-    }
-
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setName( String name) {
+        this.name = name;
     }
 
     public String getEmail() {

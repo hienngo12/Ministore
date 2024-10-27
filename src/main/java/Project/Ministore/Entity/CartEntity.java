@@ -18,23 +18,25 @@ public class CartEntity {
     @Column(name = "quantity")
     private int quantity;
     @Transient
-    @Column(name = "total_price")
     private Long total_price;
     @Transient
     @Column(name = "total_orderPrice")
     private Long total_orderPrice;
-    public String getFormattedTotalPrice() {
-        DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(total_price) + " ₫";
+public String getFormattedTotalPrice() {
+    DecimalFormat df = new DecimalFormat("#,###");
+    return df.format(getTotalPrice()) + " ₫";
+}
+    public Long getTotalPrice() {
+        if (productEntity != null && productEntity.getPrice() != null) {
+            return productEntity.getPrice() * quantity;
+        }
+        return 0L;
     }
-    public String getFormattedTotalPriceX() {
-        DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(total_price*quantity) + " ₫";
-    }
-    public String getFormattedTotalOrderPrice() {
-        DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(total_orderPrice) + " ₫";
-    }
+public String getFormattedTotalOrderPrice() {
+    DecimalFormat df = new DecimalFormat("#,###");
+    return df.format(total_orderPrice) + " ₫";
+}
+
     public int getId() {
         return id;
     }

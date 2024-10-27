@@ -1,4 +1,5 @@
 package Project.Ministore.controller;
+import Project.Ministore.Config.MyAccountDetails;
 import Project.Ministore.Dto.OrdersAddressEntityDto;
 import Project.Ministore.Entity.*;
 import Project.Ministore.repository.AccountRepository;
@@ -8,6 +9,9 @@ import Project.Ministore.util.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -42,6 +46,8 @@ public class UserController {
     private AccountRepository accountRepository;
     @Autowired
     private VNPayService vnPayService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @GetMapping("/")
     public String home() {
 
@@ -76,14 +82,19 @@ public class UserController {
     public String loadCartPage(Principal p, Model model, HttpSession session) {
         AccountEntity user = getLoggedInUserDetails(p);
         List<CartEntity> carts = cartService.getCartByUser(user.getId());
-        model.addAttribute("carts", carts);
-        Long totalOrderPrice = carts.get(carts.size() - 1).getTotal_orderPrice();
-        DecimalFormat df = new DecimalFormat("#,###");
-        String formattedTotalOrderPrice = df.format(totalOrderPrice) + " ₫";
-        model.addAttribute("totalOrderPrice", formattedTotalOrderPrice);
+        Boolean cartEmpty = carts == null || carts.isEmpty();
+        model.addAttribute("cartEmpty", cartEmpty); // Thêm thông báo giỏ hàng trống
+
+        if (!cartEmpty) {
+            model.addAttribute("carts", carts);
+            Long totalOrderPrice = carts.get(carts.size() - 1).getTotal_orderPrice();
+            DecimalFormat df = new DecimalFormat("#,###");
+            String formattedTotalOrderPrice = df.format(totalOrderPrice) + " ₫";
+            model.addAttribute("totalOrderPrice", formattedTotalOrderPrice);
+
+        }
         return "/user/cart";
     }
-
     public AccountEntity getLoggedInUserDetails(Principal principal) {
         String email = principal.getName();
         AccountEntity account = accountService.getUserByEmail(email);
@@ -116,8 +127,13 @@ public class UserController {
     }
 
     @GetMapping("/cartQuantityUpdate")
-    public String updateCartQuantity(@RequestParam String sy, @RequestParam Integer cid) {
-        cartService.updateQuantity(sy, cid);
+    public String updateCartQuantity(@RequestParam String sy, @RequestParam Integer cid, HttpSession session) {
+        try {
+            cartService.updateQuantity(sy, cid);
+            session.setAttribute("succMsg", "Cập nhật số lượng sản phẩm thành công.");
+        } catch (RuntimeException e) {
+            session.setAttribute("errorMsg", e.getMessage());
+        }
         return "redirect:/user/cart";
     }
 
@@ -138,28 +154,18 @@ public class UserController {
         return "/user/order";
     }
 
-//    @PostMapping("/save-order")
-//    public String saveOrders(@RequestParam String payment_type, @ModelAttribute OrdersAddressEntityDto ordersAddressEntityDto,
-//                             Principal principal) {
-//        AccountEntity user = getLoggedInUserDetails(principal);
-//        ordersService.saveOrder(user.getId(), ordersAddressEntityDto);
-//        if ("COD".equals(payment_type)) {
-//            // Xử lý đơn hàng COD
-//            return "redirect:/user/success"; // Redirect đến trang thành công cho COD
-//        } else if ("ONLINE".equals(payment_type)) {
-//            // Xử lý đơn hàng Online
-//            return "redirect:/user/ordersuccess";
-//        }// Redirect đến trang thành công cho Online
-//        return "redirect:/error";
-//    }
     @PostMapping("/save-order")
     public String saveOrders(@RequestParam String payment_type, @ModelAttribute OrdersAddressEntityDto ordersAddressEntityDto,
-                             Principal principal, HttpServletRequest request) {
+                             Principal principal, HttpServletRequest request, HttpSession session) {
         AccountEntity user = getLoggedInUserDetails(principal);
         ordersService.saveOrder(user.getId(), ordersAddressEntityDto);
 
         // Nếu chọn phương thức COD
         if ("COD".equals(payment_type)) {
+            // Xóa giỏ hàng sau khi đơn hàng được lưu
+            cartService.clearCart(user.getId());
+            // Đặt thông báo thành công trong session
+            session.setAttribute("succMsg", "Thanh toán thành công! Giỏ hàng của bạn đã được xử lý.");
             return "redirect:/user/success";
         }
         // Nếu chọn phương thức thanh toán Online
@@ -207,43 +213,38 @@ public class UserController {
         return "redirect:/user/user-orders";
     }
 
+
     @GetMapping("/profile")
     public String profile() {
         return "/user/profile";
     }
-    @PostMapping("/update-profile")
-    public String updateProfile(@RequestParam("name") String name,
-                                @RequestParam("email") String email,
-                                @RequestParam("address") String address,
-                                @RequestParam("city") String city,
-                                @RequestParam("province") String province,
-                                @RequestParam("pincode") String pincode,
-                                @RequestParam("phone") Long phone,
-                                @RequestParam("profile_image") MultipartFile profileImage, Model model, HttpSession session) {
-        try {
-//             Kiểm tra logic và xử lý dữ liệu
-            // Tạo đối tượng AccountEntity và thiết lập các thuộc tính
-            AccountEntity user = new AccountEntity();
-            user.setName(name);
-            user.setEmail(email);
-            user.setAddress(address);
-            user.setCity(city);
-            user.setProvince(province);
-            user.setPincode(pincode);
-            user.setPhone(phone);
-            // Kiểm tra nếu có tệp hình ảnh được tải lên
-            if (!profileImage.isEmpty()) {
-                user.setProfileImage(profileImage.getBytes());
+
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam String newPassword, @RequestParam String currentPassword, Principal p,
+                                 HttpSession session) {
+        AccountEntity loggedInUserDetails = getLoggedInUserDetails(p);
+
+        boolean matches = passwordEncoder.matches(currentPassword, loggedInUserDetails.getPassword());
+
+        if (matches) {
+            String encodePassword = passwordEncoder.encode(newPassword);
+            loggedInUserDetails.setPassword(encodePassword);
+            AccountEntity updateUser = accountService.updateUser(loggedInUserDetails);
+            if (ObjectUtils.isEmpty(updateUser)) {
+                session.setAttribute("errorMsg", "Mật khẩu chưa được cập nhật!! Lỗi ở máy chủ");
+            } else {
+                session.setAttribute("succMsg", "Đã cập nhật mật khẩu thành công");
             }
-            // Lưu dữ liệu người dùng vào cơ sở dữ liệu
-            accountRepository.save(user);
-            model.addAttribute("msg", "Người dùng đã đăng ký thành công!");
-            return "redirect:/user/profile";
-        } catch (Exception e) {
-            model.addAttribute("msg", "Error: " + e.getMessage());
-            return "user/profile";
+        } else {
+            session.setAttribute("succMsg", "Đã cập nhật mật khẩu thành công");
         }
+
+        return "redirect:/user/profile";
     }
+
+
+
+
     @PostMapping("/submitOrder")
     public String submidOrder(@RequestParam("price") Long formattedOrderPrice,
                               @RequestParam("orderInfo") String orderInfo,
@@ -265,5 +266,6 @@ public class UserController {
         // Chuyển hướng người dùng tới VNPay để thanh toán
         return "redirect:" + paymentUrl;
     }
+
 }
 

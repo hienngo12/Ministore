@@ -1,10 +1,10 @@
 package Project.Ministore.repository;
 
-import Project.Ministore.Entity.PaymentEntity;
+import Project.Ministore.Entity.OrdersAddressEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PaymentRepository extends JpaRepository<PaymentEntity, Integer> {
-
+public interface OrdersAddessRepository extends JpaRepository<OrdersAddressEntity, Integer> {
+    
 }
